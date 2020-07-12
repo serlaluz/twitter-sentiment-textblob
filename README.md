@@ -1,6 +1,6 @@
 # twitter-sentiment-textblob
 
-![alt text](https://github.com/serlaluz/prophet-prediction-app/blob/master/twitter.png?raw=true)
+![alt text](https://github.com/serlaluz/twitter-sentiment-textblob/blob/master/twitter.png?raw=true)
 Simple web app that fetches information from twitter and uses Textblob to analyze the sentiment of the tweets.
 
 ## General 
