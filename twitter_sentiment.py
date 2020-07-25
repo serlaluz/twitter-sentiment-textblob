@@ -9,6 +9,7 @@ from textblob import TextBlob
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 import seaborn as sns
+import base64
 
 plt.style.use('fivethirtyeight')
 
@@ -56,7 +57,7 @@ def main():
   #Drop down menu of what is selectable
   #User will choose how many content they would want to scrape. 
   st.warning("Please note that the more pages you select, the longer the processing time.")
-  pages = st.slider('Select how many pages you want to scrape', min_value = 1, max_value = 100)
+  pages = st.slider('Select how many pages you want to scrape', min_value = 1, max_value = 1000)
 
   #This will scrape twitter
  
@@ -69,14 +70,26 @@ def main():
 
   for tweet in tweets:
     s = pd.DataFrame({'text' : [tweet['text']]})
+    d = pd.DataFrame({'text' : [tweet['text']], 'date' : [tweet['time']]})
+    tweets_print = tweets_df.append(d)
     tweets_df = tweets_df.append(s, ignore_index = True)
 
   #User will press button to see the scraped data
   if st.button("See Twitter Data"):
-    st.write(tweets_df)
+    st.write(tweets_print)
 
   #Call the clean function
   tweets_df['text'] = tweets_df['text'].apply(cleanTxt)
+
+  # for tweet in tweets:
+  # d = pd.DataFrame({'text' : [tweet['text']]})
+  # tweets_df = tweets_df.append(s, ignore_index = True)
+
+  
+  csv_exp = tweets_print.to_csv(index=False)
+  b64 = base64.b64encode(csv_exp.encode()).decode()  
+  href = f'<a href="data:file/csv;base64,{b64}">Download Twitter Info</a> right-click and save link as **[file name].csv**'
+  st.markdown(href, unsafe_allow_html=True)
 
   '''This section will allow the user to use the scraped twitter data and do the sentiment analysis.
   '''
@@ -99,6 +112,11 @@ def main():
   tweets_df['Analysis'] = tweets_df['Polarity'].apply(getAnalysis)
 
   st.write(tweets_df)
+
+  csv_exp1 = tweets_df.to_csv(index=False)
+  b64 = base64.b64encode(csv_exp1.encode()).decode()  
+  href = f'<a href="data:file/csv;base64,{b64}">Download Twitter Sentiment</a> right-click and save link as **[file name].csv**'
+  st.markdown(href, unsafe_allow_html=True)
 
   user_choice = ['Show Bar Chart', 'Show Word Cloud', 'Show Percentages', 'Show Polarity Chart', 'Show Positive Sentiment', 'Show Negative Sentiment']
   choice = st.selectbox("Select Features", user_choice)  
@@ -182,8 +200,3 @@ def main():
 
 if __name__ == '__main__':
   main()
-
-
-
-
-
